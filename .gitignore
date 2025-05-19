@@ -1,0 +1,23 @@
+# Build
+bin/
+obj/
+
+# User-specific
+*.user
+*.suo
+
+# VS folder
+.vs/
+
+# ASP.NET stuff
+appsettings.Development.json
+
+# Rider
+.idea/
+
+# Logs
+*.log
+
+# Others
+*.DS_Store
+Thumbs.db
