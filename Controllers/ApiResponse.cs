@@ -32,7 +32,10 @@
         }
 
         //Constructor for error responce
-
+        public static ApiResponse<T> ErrorResponse(T data, int statusCode, string message = "")
+        {
+            return new ApiResponse<T>(true, message, data, null, statusCode);
+        }
     }
 
 }
