@@ -9,7 +9,7 @@ namespace testapiproject.Services
     public class CategoryService : IntCateServices
     {
         private static readonly List<Category> _categories = new List<Category>();
-
+        //mapper added
         public readonly IMapper _mapper;
         public CategoryService(IMapper mapper)
         {
