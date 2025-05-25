@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using testapiproject.Controllers;
+using testapiproject.Data;
 using testapiproject.DTOs;
 using testapiproject.Interfaces;
 using testapiproject.Models;
@@ -8,57 +10,68 @@ namespace testapiproject.Services
 {
     public class CategoryService : IntCateServices
     {
-        private static readonly List<Category> _categories = new List<Category>();
+        //private static readonly List<Category> _categories = new List<Category>();
+        private readonly AppDbContext _appDbContext;
         //mapper added
         public readonly IMapper _mapper;
-        public CategoryService(IMapper mapper)
+        public CategoryService(AppDbContext appDbContext, IMapper mapper)
         {
+            _appDbContext = appDbContext;
             _mapper = mapper;
         }
 
 
-        public List<CategoryReadDto> GetAllCategory()
+        public async Task<List<CategoryReadDto>> GetAllCategory()
         {
-            return _mapper.Map<List<CategoryReadDto>>(_categories);
+            var categories = await _appDbContext.Categories.ToListAsync();
+
+            return _mapper.Map<List<CategoryReadDto>>(categories);
         }
 
-        public CategoryReadDto? GetCategoryById(Guid categoryID)
+        public async Task<CategoryReadDto?> GetCategoryById(Guid categoryID)
         {
-            var foundCategory = _categories.FirstOrDefault(c => c.CateId == categoryID);
+            var foundCategory = await _appDbContext.Categories.FindAsync(categoryID);
             return foundCategory == null ? null : _mapper.Map<CategoryReadDto>(foundCategory);
         }
 
-        public CategoryReadDto CreateCategory(CategoryCreateDto categoryCreate)
+        public async Task<CategoryReadDto> CreateCategory(CategoryCreateDto categoryCreate)
         {
             var NewCategory1 = _mapper.Map<Category>(categoryCreate);
             NewCategory1.CateId = Guid.NewGuid();
             NewCategory1.CreatedAt = DateTime.UtcNow;
             NewCategory1.UpdatedAt = DateTime.UtcNow;
 
-            _categories.Add(NewCategory1);
+            await _appDbContext.Categories.AddAsync(NewCategory1);
+
+            await _appDbContext.SaveChangesAsync();
 
             return _mapper.Map<CategoryReadDto>(NewCategory1);
         }
 
-        public CategoryReadDto UpdateCategory(Guid categoryID, CategoryUpdateDto categoryData)
+        public async Task<CategoryReadDto> UpdateCategory(Guid categoryID, CategoryUpdateDto categoryData)
         {
-            var findCategory = _categories.FirstOrDefault(c => c.CateId == categoryID);
+            var findCategory = await _appDbContext.Categories.FindAsync(categoryID);
             if (findCategory == null)
             {
                 return null;
             }
 
             _mapper.Map(categoryData ,findCategory);
+
+            _appDbContext.Categories.Update(findCategory);
+            await _appDbContext.SaveChangesAsync();
+
             return _mapper.Map<CategoryReadDto>(findCategory);
         }
-        public bool DeleteCategoryById(Guid categoryID)
+        public async Task<bool> DeleteCategoryById(Guid categoryID)
         {
-            var findCategory = _categories.FirstOrDefault(c => c.CateId == categoryID);
+            var findCategory = await _appDbContext.Categories.FindAsync(categoryID);
             if (findCategory == null)
             {
                 return false;
             }
-            _categories.Remove(findCategory);
+            _appDbContext.Categories.Remove(findCategory);
+            await _appDbContext.SaveChangesAsync();
             return true;
         }
 

@@ -4,11 +4,11 @@ namespace testapiproject.Interfaces
 {
     public interface IntCateServices
     {
-        List<CategoryReadDto> GetAllCategory();
-        CategoryReadDto? GetCategoryById(Guid categoryID);
-        CategoryReadDto CreateCategory(CategoryCreateDto categoryCreate);
-        CategoryReadDto UpdateCategory(Guid categoryID, CategoryUpdateDto categoryData);
-        bool DeleteCategoryById(Guid categoryID);
+        Task<List<CategoryReadDto>> GetAllCategory();
+        Task<CategoryReadDto?> GetCategoryById(Guid categoryID);
+        Task<CategoryReadDto> CreateCategory(CategoryCreateDto categoryCreate);
+        Task<CategoryReadDto> UpdateCategory(Guid categoryID, CategoryUpdateDto categoryData);
+        Task<bool> DeleteCategoryById(Guid categoryID);
 
 
     }
